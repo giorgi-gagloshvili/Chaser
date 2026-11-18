@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+.grid {
+  width: 1024px;
+  height: 680px;
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  grid-template-rows: repeat(18, minmax(0, 1fr));
+}
+.cell {
+  border: 1px solid #eee;
+  display: block;
+}
+.block {
+  background: #a2a;
+  border: 1px solid #eee;
+}
+
+.path {
+  background: greenyellow;
+  opacity: 0.35;
+}
+
+.player {
+  background: rgb(42, 42, 148);
+}
+
+.enemy {
+  /* background: rgb(218, 44, 44); */
+  display: flex;
+  position: absolute;
+}
+.enemy img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bomb img {
+  width: 100%;
+}
