@@ -6,7 +6,6 @@ let currentIndex = 0;
 
 createGrid(gridContainer);
 const cells = document.querySelectorAll(".cell");
-let enemyIndex = 235;
 cells[currentIndex].classList.add("player");
 
 class Enemy {
@@ -16,10 +15,11 @@ class Enemy {
 
   remove() {
     for (let i = 0; i < cells.length; i++) {
-      cells[i].classList.remove("enemy");
+      // cells[i].classList.remove("enemy");
       if (
         cells[i].firstChild &&
-        !cells[i].firstChild.classList.contains("bomb")
+        !cells[i].firstChild.classList.contains("bomb") &&
+        i !== this.index
       ) {
         cells[i].firstChild.remove();
       }
@@ -34,16 +34,18 @@ class Enemy {
     img.width = 40;
     img.height = 40;
     // cells[this.index].classList.add("enemy");
-    cells[this.index].append(img);
+    if (cells[this.index]) cells[this.index].append(img);
   }
 
   update() {
+    console.log(this.index);
     if (this.index > currentIndex) {
       if (
         (this.index - ROW_LENGTH > currentIndex &&
           cells[this.index - ROW_LENGTH] &&
           !cells[this.index - ROW_LENGTH].classList.contains("block")) ||
-        cells[this.index - ROW_LENGTH].classList.contains("player")
+        (cells[this.index - ROW_LENGTH] &&
+          cells[this.index - ROW_LENGTH].classList.contains("player"))
       ) {
         console.log("FIRST");
         this.index -= ROW_LENGTH;
@@ -56,7 +58,10 @@ class Enemy {
         console.log("SECOND");
 
         this.index -= 1;
-      } else if (this.index - ROW_LENGTH < currentIndex) {
+      } else if (
+        this.index - ROW_LENGTH < currentIndex &&
+        this.index - ROW_LENGTH >= 0
+      ) {
         console.log("THIRD");
         this.index -= ROW_LENGTH;
       } else if (this.index <= ROW_LENGTH) {
@@ -64,14 +69,13 @@ class Enemy {
         this.index -= 1;
       }
     } else if (this.index < currentIndex) {
-      console.log("MOVING");
       if (
         (cells[this.index + ROW_LENGTH] &&
           this.index + ROW_LENGTH < currentIndex &&
           !cells[this.index + ROW_LENGTH].classList.contains("block")) ||
         cells[this.index + ROW_LENGTH].classList.contains("player")
       ) {
-        console.log("FIRST");
+        console.log("++ FIRST");
         this.index += ROW_LENGTH;
       } else if (
         (this.index + ROW_LENGTH < currentIndex &&
@@ -79,22 +83,24 @@ class Enemy {
           !cells[this.index + 1].classList.contains("block")) ||
         currentIndex - this.index < ROW_LENGTH / 2
       ) {
-        console.log("SECOND");
+        console.log("++ SECOND");
         this.index += 1;
       } else if (this.index + ROW_LENGTH > currentIndex) {
-        console.log("THIRD");
+        console.log("++ THIRD");
         this.index += ROW_LENGTH;
       } else if (this.index >= cells.length - ROW_LENGTH) {
-        console.log("FOURTH");
+        console.log("++ FOURTH");
         this.index += 1;
       }
     }
   }
 }
 
-const enemy = new Enemy(235);
+const enemy = new Enemy(cells.length - 1);
+const enemy2 = new Enemy(cells.length - ROW_LENGTH);
 
 enemy.draw();
+enemy2.draw();
 
 console.log(cells);
 
@@ -103,6 +109,8 @@ function getIndex() {
   // console.log(enemyIndex);
   enemy.draw();
   enemy.update();
+  enemy2.draw();
+  enemy2.update();
 }
 
 function putTheBomb(index) {
@@ -116,7 +124,7 @@ function putTheBomb(index) {
 
 // getIndex();
 
-setInterval(getIndex, 600);
+setInterval(getIndex, 200);
 
 document.addEventListener("keydown", (event) => {
   console.log(event.key);
