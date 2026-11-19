@@ -3,6 +3,8 @@ import { data, createGrid, removeActive } from "/init.js";
 const gridContainer = document.getElementById("grid");
 const ROW_LENGTH = data[0].length;
 let currentIndex = 0;
+let gameOver = false;
+let timer = null;
 
 createGrid(gridContainer);
 const cells = document.querySelectorAll(".cell");
@@ -97,10 +99,8 @@ class Enemy {
 }
 
 const enemy = new Enemy(cells.length - 1);
-const enemy2 = new Enemy(cells.length - ROW_LENGTH);
 
 enemy.draw();
-enemy2.draw();
 
 console.log(cells);
 
@@ -109,8 +109,6 @@ function getIndex() {
   // console.log(enemyIndex);
   enemy.draw();
   enemy.update();
-  enemy2.draw();
-  enemy2.update();
 }
 
 function putTheBomb(index) {
@@ -124,15 +122,14 @@ function putTheBomb(index) {
 
 // getIndex();
 
-setInterval(getIndex, 200);
+timer = setInterval(getIndex, 200);
 
-document.addEventListener("keydown", (event) => {
+const playerMove = (event) => {
   console.log(event.key);
   removeActive(cells, "player");
   switch (event.key) {
     case "ArrowUp":
       currentIndex -= ROW_LENGTH;
-
       break;
     case "ArrowRight":
       currentIndex += 1;
@@ -148,4 +145,11 @@ document.addEventListener("keydown", (event) => {
   }
   console.log(currentIndex);
   cells[currentIndex].classList.add("player");
-});
+};
+
+document.addEventListener("keydown", playerMove);
+
+if (gameOver) {
+  document.removeEventListener("keydown", playerMove);
+  clearInterval(timer);
+}
